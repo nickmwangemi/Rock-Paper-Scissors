@@ -1,53 +1,88 @@
 let userScore = 0
 let computerScore = 0
+let lastComputerSelection
+
+let userScoreElement = document.getElementById('user-score')
+let computerScoreElement = document.getElementById('computer-score')
+let scoreBoard = document.getElementsByClassName('score-board')
+let result = document.querySelector('.result')
+
+let rock = document.getElementById('rock')
+let paper = document.getElementById('paper')
+let scissors = document.getElementById('scissors')
+let playerSelections = document.querySelectorAll('.choice')
+let gameRoundElement = document.getElementById('game-round')
+let resetButton = document.getElementById('reset')
+let playerSelection
+let gameRounds = 0
+
+function rounds() {
+	gameRounds++
+	gameRoundElement.innerText = `ROUND: ${gameRounds}`
+}
+
+gameRoundElement.addEventListener('change', rounds)
+
+function reset() {
+	if (gameRoundElement.innerText > '0') {
+		gameRoundElement.innerText = 'ROUND: 0'
+	}
+}
+resetButton.addEventListener('click', reset)
 
 function computerPlay() {
 	let choices = ['Rock', 'Paper', 'Scissors']
-	let selection = Math.floor(Math.random() * choices.length)
-	return choices[selection]
-}
-
-function userInput() {
-	let userInput = prompt('Rock? Paper? Scissors?')
-	return userInput.toLowerCase()
+	let index = Math.floor(Math.random() * choices.length)
+	let selection = choices[index].toLowerCase()
+	// check if random selection gets repeated consecutively
+	if (selection === lastComputerSelection) {
+		// console.log("that's the same one")
+		return computerPlay()
+	}
+	lastComputerSelection = selection
+	return selection
 }
 
 function wins(playerSelection, computerSelection) {
 	userScore++
-	return `You Win! ${playerSelection} beats ${computerSelection} `
+	computerScore--
+	userScoreElement.innerText = userScore
+	computerScoreElement.innerText = computerScore
+	result.innerText = `Yaaaay! You Win! ${playerSelection} beats ${computerSelection} `
 }
 
 function loses(playerSelection, computerSelection) {
 	userScore--
-	return `You Lose! ${playerSelection} beats ${computerSelection} `
+	computerScore++
+	userScoreElement.innerText = userScore
+	computerScoreElement.innerText = computerScore
+	result.textContent = `Boohoo! You Lose! ${computerSelection} beats ${playerSelection} `
 }
 
 function ties(playerSelection, computerSelection) {
-	return "It's a tie!"
+	userScoreElement.innerText = userScore
+	computerScoreElement.innerText = computerScore
+	result.textContent = "It's a tie!"
 }
 
-function game() {
-	for (let i = 0; i < 5; i++) {
-		let result = playRound(playerSelection, computerSelection)
-	}
-	if (userScore > computerScore) {
-		userScore++
-		console.log(`\nYaaaay! You win 
-		\n Final Score: USER ${userScore} COMPUTER: ${computerScore}`)
-	} else if (computerScore > userScore) {
-		computerScore++
-		console.log(`\nBoohoo! You lose! 
-		\n Final Score: USER ${userScore} COMPUTER: ${computerScore}`)
-	} else {
-		console.log(`\nIt's a tie!
-		\n Final Score: USER ${userScore} COMPUTER: ${computerScore}`)
-	}
+function game(event) {
+	playerSelection = event.target.innerHTML.toLowerCase()
+
+	let computerSelection = computerPlay()
+
+	// For testing purposes
+	console.log('USER: ' + event.target.innerHTML.toLowerCase())
+	console.log('COMPUTER: ' + computerSelection)
+
+	playRound(playerSelection, computerSelection)
+	rounds()
 }
+
+playerSelections.forEach((playerSelection) => {
+	playerSelection.addEventListener('click', game)
+})
 
 function playRound(playerSelection, computerSelection) {
-	playerSelection = userInput().toLowerCase()
-	computerSelection = computerPlay().toLowerCase()
-
 	switch (playerSelection + computerSelection) {
 		case 'rockscissors':
 		case 'paperrock':
@@ -67,11 +102,4 @@ function playRound(playerSelection, computerSelection) {
 			ties(playerSelection, computerSelection)
 			break
 	}
-	console.log('\nPLAYER: ' + playerSelection)
-	console.log('COMPUTER: ' + computerSelection)
 }
-
-const playerSelection = userInput()
-const computerSelection = computerPlay()
-
-game(playerSelection, computerSelection)
