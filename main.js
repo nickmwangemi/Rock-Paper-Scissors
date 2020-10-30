@@ -25,6 +25,7 @@ gameRoundElement.addEventListener('change', rounds)
 
 function reset() {
 	if (gameRoundElement.innerText > '0') {
+		gameRounds = 0
 		gameRoundElement.innerText = 'ROUND: 0'
 	}
 }
