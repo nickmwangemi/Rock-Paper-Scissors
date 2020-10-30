@@ -27,6 +27,7 @@ function reset() {
 	if (gameRoundElement.innerText > '0') {
 		gameRounds = 0
 		gameRoundElement.innerText = 'ROUND: 0'
+		result.innerText = ''
 	}
 }
 resetButton.addEventListener('click', reset)
